@@ -106,6 +106,32 @@ System::init_DBus()
 
 
 bool 
+System::add_DBus_cinnamon_lock_cmd(const char *dbus_name, const char *dbus_path, const char *dbus_interface,
+                                   const char *dbus_lock_method, const char *dbus_method_to_check_existence)
+{
+  TRACE_ENTER_MSG("System::add_DBus_cinnamon_lock_cmd", dbus_name);
+
+  // I wish we could use std::move here
+  IScreenLockMethod *lock_method = NULL;
+  lock_method = new ScreenLockDBusCinnamon(session_connection,
+          dbus_name, dbus_path, dbus_interface,
+          dbus_lock_method, dbus_method_to_check_existence);
+  if (!lock_method->is_lock_supported())
+    {
+      delete lock_method;
+      lock_method = NULL;
+      TRACE_RETURN(false);
+      return false;
+    }
+  else
+    {
+      lock_commands.push_back(lock_method);
+      TRACE_RETURN(true);
+      return true;
+    }
+}
+
+bool 
 System::add_DBus_lock_cmd(const char *dbus_name, const char *dbus_path, const char *dbus_interface,
                           const char *dbus_lock_method, const char *dbus_method_to_check_existence)
 {
@@ -155,7 +181,7 @@ System::init_DBus_lock_commands()
 
       //  Cinnamon:   https://github.com/linuxmint/cinnamon-screensaver/blob/master/doc/dbus-interface.html
       //    Same api as GNOME, but with different name,
-      add_DBus_lock_cmd(
+      add_DBus_cinnamon_lock_cmd(
             "org.cinnamon.ScreenSaver", "/org/cinnamon/ScreenSaver", "org.cinnamon.ScreenSaver",
             "Lock", "GetActive");
 

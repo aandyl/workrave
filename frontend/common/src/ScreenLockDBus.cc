@@ -58,3 +58,22 @@ bool ScreenLockDBus::lock()
   return proxy.call_method(dbus_lock_method, NULL, NULL);
   TRACE_EXIT();
 }
+
+bool ScreenLockDBusCinnamon::lock()
+{
+  TRACE_ENTER_MSG("ScreenLockDBus::lock", dbus_lock_method);
+
+  GVariant *empty_string, *args;
+
+  //Cinnamon Lock method takes an argument which is a message for the lock screen,
+  //give it an empty string.
+  empty_string = g_variant_new_string("");
+  args = g_variant_new_tuple(&empty_string, 1);
+  g_variant_ref_sink(args);
+
+  bool ret = proxy.call_method(dbus_lock_method, args, NULL);
+
+  g_variant_unref(args);
+  TRACE_EXIT();
+  return ret;
+}

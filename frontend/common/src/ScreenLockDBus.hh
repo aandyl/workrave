@@ -39,9 +39,27 @@ public:
   virtual bool is_lock_supported() {   return proxy.is_valid();  };
   virtual bool lock();
 
-private:
+protected:
   const char *dbus_lock_method;
   DBusProxy proxy;
+};
+
+class ScreenLockDBusCinnamon: public ScreenLockDBus {
+public:
+  //dbus_lock_method - method to execute on the interface in order to lock the system
+  //dbus_method_to_check_existence - method to execute in order to check if the interface
+  //                                 is implemented
+  //all parameters are owned by the caller and should be destroyed after 
+  //destroyal of this object
+  ScreenLockDBusCinnamon(GDBusConnection *connection,
+                  const char *dbus_name, const char *dbus_path, const char *dbus_interface, 
+                  const char *dbus_lock_method, const char *dbus_method_to_check_existence)
+          : ScreenLockDBus(connection, dbus_name, dbus_path, dbus_interface,
+                          dbus_lock_method, dbus_method_to_check_existence) {}
+
+  virtual ~ScreenLockDBusCinnamon() {};
+
+  virtual bool lock();
 };
 
 #endif

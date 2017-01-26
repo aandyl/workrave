@@ -100,6 +100,9 @@ private:
   static inline bool add_DBus_lock_cmd(
       const char *dbus_name, const char *dbus_path, const char *dbus_interface,
       const char *dbus_lock_method, const char *dbus_method_to_check_existence);
+  static inline bool add_DBus_cinnamon_lock_cmd(
+      const char *dbus_name, const char *dbus_path, const char *dbus_interface,
+      const char *dbus_lock_method, const char *dbus_method_to_check_existence);
 
   static void add_DBus_system_state_command(
       ISystemStateChangeMethod *method);
